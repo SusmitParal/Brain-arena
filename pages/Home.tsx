@@ -1,0 +1,405 @@
+import React, { useState, useEffect } from 'react';
+import Button from '../components/Button';
+import { UserProfile, UserChest } from '../types';
+import { CHEST_DATA } from '../constants';
+import { Swords, Brain, Users, Trophy, Settings, Zap, Smartphone, ShoppingBag, Gift, Clock, PlayCircle, Loader2, Calendar, Coins, Gem } from 'lucide-react';
+import { openChest } from '../services/rewardService';
+import { audioManager } from '../services/audioService';
+
+interface HomeProps {
+  user: UserProfile;
+  onNavigate: (screen: any) => void;
+  onUpdateUser: (u: UserProfile) => void;
+}
+
+const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
+  const [rewardModal, setRewardModal] = useState<any>(null);
+  const [showDailyRewards, setShowDailyRewards] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const [spinResult, setSpinResult] = useState<string | null>(null);
+
+  // Timer Tick Update
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Check Daily Login Logic
+  useEffect(() => {
+    const checkDaily = () => {
+        const now = Date.now();
+        const lastClaim = user.lastDailyClaim || 0;
+        const oneDay = 24 * 60 * 60 * 1000;
+        if (now - lastClaim > oneDay) {
+            setShowDailyRewards(true);
+        }
+    };
+    checkDaily();
+  }, [user.lastDailyClaim]);
+
+
+  const handleUnlockChest = (chestId: string) => {
+     const updatedChests = user.chests.map(c => {
+         if (c.id === chestId) {
+             return { ...c, unlockStartedAt: Date.now() };
+         }
+         return c;
+     });
+     onUpdateUser({ ...user, chests: updatedChests });
+     audioManager.playSFX('click');
+  };
+
+  const handleWatchAd = (chestId: string) => {
+     if (!confirm("Watch a short video to reduce unlock time by 1.5 hours?")) return;
+     setTimeout(() => {
+         const updatedChests = user.chests.map(c => {
+             if (c.id === chestId) {
+                 return { ...c, timeReducedByAds: (c.timeReducedByAds || 0) + (1.5 * 60 * 60 * 1000) };
+             }
+             return c;
+         });
+         onUpdateUser({ ...user, chests: updatedChests });
+         audioManager.playSFX('win');
+     }, 2000);
+  };
+
+  const handleOpenChest = (chest: UserChest) => {
+      const result = openChest(chest.tier);
+      audioManager.playSFX('win');
+      
+      const newInventory = [...user.inventory];
+      if (result.item && !newInventory.includes(result.item.id)) {
+          newInventory.push(result.item.id);
+      } else if (result.item) {
+          result.gems += 5; 
+      }
+
+      const updatedChests = user.chests.filter(c => c.id !== chest.id);
+
+      onUpdateUser({
+          ...user,
+          coins: user.coins + result.coins,
+          gems: user.gems + result.gems,
+          chests: updatedChests,
+          inventory: newInventory
+      });
+
+      setRewardModal(result);
+  };
+
+  const handleSpinWheel = () => {
+      setSpinning(true);
+      audioManager.playSFX('click');
+      setTimeout(() => {
+          const outcomes = [
+              { label: '500 Coins', coins: 500, gems: 0 },
+              { label: '1000 Coins', coins: 1000, gems: 0 },
+              { label: '10 Gems', coins: 0, gems: 10 },
+              { label: '50 Gems', coins: 0, gems: 50 },
+              { label: 'JACKPOT', coins: 5000, gems: 100 },
+              { label: '200 Coins', coins: 200, gems: 0 },
+          ];
+          const rand = Math.random();
+          let winIndex = 0;
+          if (rand < 0.05) winIndex = 4;
+          else if (rand < 0.15) winIndex = 3;
+          else if (rand < 0.3) winIndex = 2;
+          else if (rand < 0.6) winIndex = 1;
+          else winIndex = 0;
+          
+          const win = outcomes[winIndex];
+          setSpinResult(win.label);
+          setSpinning(false);
+          audioManager.playSFX('win');
+          
+          const oneDay = 24 * 60 * 60 * 1000;
+          const timeDiff = Date.now() - (user.lastDailyClaim || 0);
+          let newStreak = user.streak + 1;
+          if (timeDiff > oneDay * 2) newStreak = 1;
+          
+          onUpdateUser({
+              ...user,
+              coins: user.coins + win.coins,
+              gems: user.gems + win.gems,
+              streak: newStreak,
+              lastDailyClaim: Date.now()
+          });
+          
+      }, 3000);
+  };
+
+  const renderChest = (chest: UserChest) => {
+      const config = CHEST_DATA[chest.tier];
+      let remaining = 0;
+      let status: 'LOCKED' | 'UNLOCKING' | 'READY' = 'LOCKED';
+
+      if (chest.isUnlocked) {
+          status = 'READY';
+      } else if (chest.unlockStartedAt) {
+          const elapsed = now - chest.unlockStartedAt;
+          const totalReduction = chest.timeReducedByAds || 0;
+          const needed = config.unlockTimeMs - totalReduction;
+          if (elapsed >= needed) status = 'READY';
+          else {
+              remaining = needed - elapsed;
+              status = 'UNLOCKING';
+          }
+      }
+
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
+      const timeStr = `${h}h ${m}m`;
+
+      return (
+          <div key={chest.id} className={`relative bg-white border-b-4 border-gray-300 rounded-2xl p-2 flex flex-col items-center justify-between min-h-[120px] shadow-sm transform transition-transform hover:scale-105`}>
+              <div className={`text-[10px] uppercase font-black tracking-widest ${status === 'READY' ? 'text-yellow-500' : 'text-gray-400'}`}>
+                  {status === 'READY' ? 'OPEN!' : status === 'UNLOCKING' ? 'UNLOCKING' : chest.tier}
+              </div>
+              
+              <div className={`bg-gradient-to-br ${config.color} w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg relative border-2 border-white transform rotate-3`}>
+                  <Gift size={28} className="text-white drop-shadow-md"/>
+                  {status === 'LOCKED' && <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center"><Clock size={16} className="text-white"/></div>}
+              </div>
+
+              {status === 'LOCKED' && (
+                  <button onClick={() => handleUnlockChest(chest.id)} className="w-full bg-blue-100 text-[10px] py-1 rounded-lg text-blue-600 font-bold hover:bg-blue-200">
+                      START
+                  </button>
+              )}
+
+              {status === 'UNLOCKING' && (
+                  <div className="w-full text-center">
+                      <div className="text-[10px] font-mono text-gray-500 mb-1">{timeStr}</div>
+                      <button onClick={() => handleWatchAd(chest.id)} className="w-full bg-purple-100 text-[10px] py-1 rounded-lg text-purple-600 flex items-center justify-center gap-1 hover:bg-purple-200 font-bold">
+                          <PlayCircle size={10}/> SPEED
+                      </button>
+                  </div>
+              )}
+
+              {status === 'READY' && (
+                  <button onClick={() => handleOpenChest(chest)} className="w-full bg-yellow-400 text-[10px] py-1 rounded-lg text-yellow-900 font-bold hover:bg-yellow-300 animate-bounce">
+                      OPEN
+                  </button>
+              )}
+          </div>
+      );
+  };
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-start p-6 space-y-6 animate-fade-in overflow-y-auto pb-24 scrollbar-hide">
+      
+      {/* Hero Section */}
+      <div className="text-center space-y-1 mt-4 relative z-10">
+        <h1 className="text-5xl md:text-6xl font-black text-white drop-shadow-[0_4px_0_rgba(0,0,0,0.2)] tracking-tight">
+          BRAIN<br/><span className="text-yellow-300">ARENA</span>
+        </h1>
+        <div className="inline-block bg-white/20 backdrop-blur-md px-4 py-1 rounded-full border border-white/30 text-xs font-bold uppercase tracking-widest text-white">
+            Global IQ Battle
+        </div>
+      </div>
+
+      {/* IQ Meter Preview */}
+      <div className="w-full max-w-md bg-white/90 backdrop-blur-md p-4 rounded-3xl border-b-8 border-blue-200 shadow-xl relative overflow-hidden group">
+        <div className="flex justify-between items-end mb-2">
+          <div className="flex flex-col">
+             <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">My Brain Power</span>
+             <span className="text-blue-600 font-black flex items-center gap-2 text-xl">
+               <Brain size={24} className="text-pink-500 fill-pink-500"/> Level {user.level}
+             </span>
+          </div>
+          <span className="text-slate-800 font-black text-2xl">Top 15%</span>
+        </div>
+        
+        {/* Progress Bar Segmented */}
+        <div className="flex gap-1 h-3 w-full bg-slate-100 p-1 rounded-full">
+           <div className="h-full flex-1 bg-yellow-400 rounded-full"></div>
+           <div className="h-full flex-1 bg-yellow-400 rounded-full"></div>
+           <div className="h-full flex-1 bg-yellow-400 rounded-full"></div>
+           <div className="h-full flex-1 bg-slate-200 rounded-full"></div>
+        </div>
+      </div>
+
+      {/* Main Actions - Primary Cards */}
+      <div className="w-full max-w-md grid grid-cols-1 gap-4">
+        <button 
+          className="relative group w-full h-28 rounded-3xl bg-gradient-to-r from-blue-500 to-blue-400 border-b-8 border-blue-700 active:border-b-0 active:translate-y-2 transition-all shadow-xl overflow-hidden"
+          onClick={() => onNavigate('MODE_SELECT_SOLO')}
+        >
+          <div className="absolute -right-4 -bottom-4 text-blue-300/30 transform rotate-12">
+             <Zap size={120} fill="currentColor"/>
+          </div>
+          <div className="relative z-10 flex items-center justify-between px-6 h-full">
+             <div className="flex items-center space-x-4">
+                <div className="bg-white p-3 rounded-2xl text-blue-500 shadow-sm transform group-hover:rotate-6 transition-transform">
+                  <Zap size={32} fill="currentColor" />
+                </div>
+                <div className="text-left">
+                  <h3 className="text-3xl font-black text-white italic drop-shadow-md">SOLO QUIZ</h3>
+                  <p className="text-xs text-blue-100 font-bold uppercase tracking-wider bg-blue-600/30 inline-block px-2 rounded">Train Brain</p>
+                </div>
+             </div>
+          </div>
+        </button>
+
+        <button 
+          className="relative group w-full h-28 rounded-3xl bg-gradient-to-r from-red-500 to-orange-500 border-b-8 border-red-700 active:border-b-0 active:translate-y-2 transition-all shadow-xl overflow-hidden"
+          onClick={() => onNavigate('MODE_SELECT_BATTLE')}
+        >
+          <div className="absolute -right-4 -bottom-4 text-red-300/30 transform -rotate-12">
+             <Swords size={120} />
+          </div>
+          <div className="relative z-10 flex items-center justify-between px-6 h-full">
+             <div className="flex items-center space-x-4">
+                <div className="bg-white p-3 rounded-2xl text-red-500 shadow-sm transform group-hover:-rotate-6 transition-transform">
+                  <Swords size={32} />
+                </div>
+                <div className="text-left">
+                  <h3 className="text-3xl font-black text-white italic drop-shadow-md">BATTLE</h3>
+                  <p className="text-xs text-red-100 font-bold uppercase tracking-wider bg-red-600/30 inline-block px-2 rounded">PvP Arena</p>
+                </div>
+             </div>
+          </div>
+        </button>
+
+        <div className="grid grid-cols-2 gap-4">
+             <button 
+              className="relative group w-full h-24 rounded-3xl bg-purple-500 border-b-8 border-purple-700 active:border-b-0 active:translate-y-2 transition-all shadow-lg flex flex-col items-center justify-center text-white"
+              onClick={() => onNavigate('PASS_N_PLAY')}
+            >
+              <Smartphone size={28} className="mb-1 opacity-80"/>
+              <span className="text-lg font-black leading-none">PASS 'N<br/>PLAY</span>
+            </button>
+            
+            <button 
+              className="relative group w-full h-24 rounded-3xl bg-yellow-400 border-b-8 border-yellow-600 active:border-b-0 active:translate-y-2 transition-all shadow-lg flex flex-col items-center justify-center text-yellow-900"
+              onClick={() => onNavigate('STORE')}
+            >
+              <ShoppingBag size={28} className="mb-1 opacity-80"/>
+              <span className="text-lg font-black leading-none">SHOP</span>
+            </button>
+        </div>
+      </div>
+
+      {/* CHEST SLOTS UI */}
+      <div className="w-full max-w-md bg-white/20 backdrop-blur-sm p-4 rounded-3xl border-2 border-white/20">
+          <div className="flex items-center justify-between mb-3 px-1">
+              <h3 className="text-sm text-white font-black uppercase tracking-widest drop-shadow-md flex items-center gap-2"><Gift size={16}/> Chest Slots</h3>
+              <span className="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">{user.chests.length}/4</span>
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+              {Array.from({ length: 4 }).map((_, i) => {
+                  const chest = user.chests[i];
+                  if (chest) return renderChest(chest);
+                  return (
+                      <div key={`empty-${i}`} className="border-2 border-dashed border-white/30 bg-black/10 rounded-2xl min-h-[120px] flex items-center justify-center">
+                          <span className="text-[10px] text-white/50 font-bold uppercase">Empty</span>
+                      </div>
+                  );
+              })}
+          </div>
+      </div>
+
+      {/* Secondary Grid */}
+      <div className="w-full max-w-md grid grid-cols-4 gap-3">
+        <Button variant="secondary" className="flex flex-col items-center justify-center h-20 space-y-1 p-0 rounded-2xl bg-white border-slate-200 text-slate-500 hover:bg-slate-50" onClick={() => onNavigate('TOURNAMENTS')}>
+          <Trophy size={20} className="text-yellow-500 fill-yellow-500"/>
+          <span className="text-[10px] font-bold">Events</span>
+        </Button>
+        <Button variant="secondary" className="flex flex-col items-center justify-center h-20 space-y-1 p-0 rounded-2xl bg-white border-slate-200 text-slate-500 hover:bg-slate-50" onClick={() => onNavigate('FRIENDS')}>
+          <Users size={20} className="text-green-500 fill-green-500"/>
+          <span className="text-[10px] font-bold">Team</span>
+        </Button>
+        <Button variant="secondary" className="flex flex-col items-center justify-center h-20 space-y-1 p-0 rounded-2xl bg-white border-slate-200 text-slate-500 hover:bg-slate-50" onClick={() => onNavigate('LEADERBOARD')}>
+          <div className="relative">
+             <Trophy size={20} className="text-purple-500 fill-purple-500"/>
+          </div>
+          <span className="text-[10px] font-bold">Ranks</span>
+        </Button>
+        <Button variant="secondary" className="flex flex-col items-center justify-center h-20 space-y-1 p-0 rounded-2xl bg-white border-slate-200 text-slate-500 hover:bg-slate-50" onClick={() => onNavigate('SETTINGS')}>
+          <Settings size={20} className="text-slate-400"/>
+          <span className="text-[10px] font-bold">Config</span>
+        </Button>
+      </div>
+
+      {/* DAILY REWARD MODAL */}
+      {showDailyRewards && (
+           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in px-4">
+               <div className="bg-white border-b-8 border-purple-300 rounded-3xl p-8 max-w-sm w-full text-center relative overflow-hidden shadow-2xl">
+                   
+                   {!spinResult ? (
+                       <>
+                           <h2 className="text-4xl font-black text-purple-600 mb-2 relative z-10">DAILY SPIN!</h2>
+                           <p className="text-gray-500 text-sm mb-6 relative z-10 font-bold">
+                               Streak: <span className="text-orange-500">{user.streak} Days 🔥</span>
+                           </p>
+                           
+                           <div className={`relative w-48 h-48 mx-auto mb-8 transition-transform duration-[3000ms] ease-out ${spinning ? 'rotate-[1080deg]' : ''}`}>
+                               <div className="w-full h-full rounded-full border-8 border-purple-500 bg-white relative flex items-center justify-center overflow-hidden shadow-inner">
+                                   <div className="absolute inset-0 bg-[conic-gradient(from_0deg,#f3e8ff,#d8b4fe,#f3e8ff)]"></div>
+                                   {spinning ? <Loader2 size={64} className="text-purple-500 animate-spin relative z-10"/> : <Gift size={64} className="text-yellow-500 animate-bounce relative z-10 drop-shadow-md"/>}
+                               </div>
+                               {/* Pointer */}
+                               <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-red-500 rotate-45 border-4 border-white z-20 shadow-md"></div>
+                           </div>
+                           
+                           <Button variant="primary" size="lg" disabled={spinning} onClick={handleSpinWheel} className="w-full relative z-10 text-xl">
+                               {spinning ? 'SPINNING...' : 'SPIN NOW!'}
+                           </Button>
+                       </>
+                   ) : (
+                       <>
+                           <h2 className="text-4xl font-black text-yellow-500 mb-6 relative z-10 drop-shadow-sm">JACKPOT!</h2>
+                           <div className="text-3xl font-black text-slate-800 mb-2">{spinResult}</div>
+                           <p className="text-gray-400 mb-8 font-bold">Come back tomorrow!</p>
+                           <Button variant="gold" size="lg" onClick={() => { setShowDailyRewards(false); setSpinResult(null); }} className="w-full relative z-10 text-xl">
+                               CLAIM
+                           </Button>
+                       </>
+                   )}
+               </div>
+           </div>
+      )}
+
+      {/* CHEST REWARD MODAL */}
+      {rewardModal && (
+           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in px-4" onClick={() => setRewardModal(null)}>
+               <div className="bg-white border-b-8 border-yellow-400 rounded-3xl p-8 max-w-sm w-full text-center relative overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+                   <div className="absolute top-0 left-0 w-full h-32 bg-yellow-100 rounded-t-3xl"></div>
+                   <h2 className="text-4xl font-black text-yellow-500 mb-6 relative z-10 drop-shadow-sm">OPENED!</h2>
+                   
+                   <div className="flex justify-center gap-6 mb-8 relative z-10">
+                       <div className="flex flex-col items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+                           <Coins size={40} className="text-yellow-400 mb-2 fill-yellow-400"/>
+                           <span className="text-xl font-black text-slate-700">+{rewardModal.coins}</span>
+                       </div>
+                       {rewardModal.gems > 0 && (
+                        <div className="flex flex-col items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+                            <Gem size={40} className="text-pink-400 mb-2 fill-pink-400"/>
+                            <span className="text-xl font-black text-slate-700">+{rewardModal.gems}</span>
+                        </div>
+                       )}
+                   </div>
+
+                   {rewardModal.item && (
+                       <div className="bg-slate-50 p-4 rounded-2xl mb-6 border-2 border-slate-100 relative z-10">
+                           <div className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">New Item Unlocked!</div>
+                           <div className="text-6xl mb-2 filter drop-shadow-lg transform hover:scale-110 transition-transform cursor-pointer">{rewardModal.item.content}</div>
+                           <div className={`text-xl font-black ${
+                               rewardModal.item.rarity === 'Legendary' ? 'text-yellow-500' : 'text-slate-800'
+                           }`}>
+                               {rewardModal.item.name}
+                           </div>
+                           <div className="text-xs font-bold text-slate-400 uppercase mt-1 px-2 py-1 bg-slate-200 rounded-full inline-block">{rewardModal.item.rarity}</div>
+                       </div>
+                   )}
+
+                   <Button variant="gold" onClick={() => setRewardModal(null)} className="w-full relative z-10 text-xl">Awesome!</Button>
+               </div>
+           </div>
+       )}
+    </div>
+  );
+};
+
+export default Home;

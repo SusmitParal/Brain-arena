@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Brain Arena</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Fredoka', 'sans-serif'],
+              display: ['Fredoka', 'sans-serif'],
+              orbitron: ['Fredoka', 'sans-serif'], // Mapping old font to new
+              rajdhani: ['Fredoka', 'sans-serif'], // Mapping old font to new
+            },
+            colors: {
+              toon: {
+                blue: '#3b82f6',
+                purple: '#8b5cf6',
+                pink: '#ec4899',
+                yellow: '#eab308',
+                teal: '#14b8a6',
+                red: '#ef4444',
+                dark: '#1e1b4b',
+              }
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'bounce-slow': 'bounce 3s infinite',
+              'wiggle': 'wiggle 1s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              wiggle: {
+                '0%, 100%': { transform: 'rotate(-3deg)' },
+                '50%': { transform: 'rotate(3deg)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background: linear-gradient(135deg, #4c1d95 0%, #2563eb 100%);
+        color: white;
+        font-family: 'Fredoka', sans-serif;
+        overflow-x: hidden;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      /* Glass Panel - Cartoon Style */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 24px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      }
+
+      /* Animated Background Bubbles */
+      .bubbles {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+      }
+      .bubble {
+        position: absolute;
+        bottom: -100px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: rise 15s infinite ease-in;
+      }
+      .bubble:nth-child(1) { width: 40px; height: 40px; left: 10%; animation-duration: 8s; }
+      .bubble:nth-child(2) { width: 20px; height: 20px; left: 20%; animation-duration: 5s; animation-delay: 1s; }
+      .bubble:nth-child(3) { width: 50px; height: 50px; left: 35%; animation-duration: 7s; animation-delay: 2s; }
+      .bubble:nth-child(4) { width: 80px; height: 80px; left: 50%; animation-duration: 11s; animation-delay: 0s; }
+      .bubble:nth-child(5) { width: 35px; height: 35px; left: 55%; animation-duration: 6s; animation-delay: 1s; }
+      .bubble:nth-child(6) { width: 45px; height: 45px; left: 65%; animation-duration: 8s; animation-delay: 3s; }
+      .bubble:nth-child(7) { width: 90px; height: 90px; left: 70%; animation-duration: 12s; animation-delay: 2s; }
+      .bubble:nth-child(8) { width: 25px; height: 25px; left: 80%; animation-duration: 6s; animation-delay: 2s; }
+      .bubble:nth-child(9) { width: 15px; height: 15px; left: 70%; animation-duration: 5s; animation-delay: 1s; }
+      .bubble:nth-child(10) { width: 90px; height: 90px; left: 25%; animation-duration: 10s; animation-delay: 4s; }
+
+      @keyframes rise {
+        0% { bottom: -100px; transform: translateX(0); }
+        50% { transform: translateX(100px); }
+        100% { bottom: 1080px; transform: translateX(-200px); }
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+      ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <div class="bubbles">
+      <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+      <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+      <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+      <div class="bubble"></div>
+    </div>
+  </body>
+</html>
