@@ -117,16 +117,26 @@ const Store: React.FC<StoreProps> = ({ user, onUpdateUser, onNavigate }) => {
                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                        {GAME_ITEMS.filter(i => i.type === 'AVATAR' && i.priceCoins).map(item => {
                            const isOwned = user.inventory.includes(item.id);
+                           const isSelected = user.selectedAvatar === item.id;
                            const canAfford = user.coins >= (item.priceCoins || 0);
                            return (
-                               <div key={item.id} className="bg-slate-900/50 p-4 rounded-xl border border-white/10 flex flex-col items-center relative overflow-hidden">
-                                   <div className="text-5xl mb-2">{item.content}</div>
-                                   <div className={`font-bold ${item.rarity === 'Legendary' ? 'text-yellow-400' : 'text-white'}`}>{item.name}</div>
+                               <div key={item.id} className={`bg-slate-900/50 p-4 rounded-xl border ${isSelected ? 'border-green-500 ring-2 ring-green-500/50' : 'border-white/10'} flex flex-col items-center relative overflow-hidden transition-all`}>
+                                   <div className="mb-2">
+                                       {item.content.startsWith('http') ? (
+                                           <img src={item.content} alt={item.name} className="w-16 h-16 rounded-full border-2 border-white/20 bg-slate-800 object-cover" />
+                                       ) : (
+                                           <div className="text-5xl">{item.content}</div>
+                                       )}
+                                   </div>
+                                   <div className={`font-bold text-center text-sm ${item.rarity === 'Legendary' ? 'text-yellow-400' : 'text-white'}`}>{item.name}</div>
                                    
                                    {isOwned ? (
-                                       <div className="mt-2 bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                                           <Check size={12}/> OWNED
-                                       </div>
+                                       <button 
+                                           onClick={() => onUpdateUser({...user, selectedAvatar: item.id})}
+                                           className={`mt-2 w-full py-1 rounded-full text-xs font-bold flex items-center justify-center gap-1 ${isSelected ? 'bg-green-500 text-white' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
+                                       >
+                                           {isSelected ? <Check size={12}/> : 'EQUIP'}
+                                       </button>
                                    ) : (
                                        <button 
                                           onClick={() => handleBuyItem(item)}

@@ -31,6 +31,8 @@
               'float': 'float 6s ease-in-out infinite',
               'bounce-slow': 'bounce 3s infinite',
               'wiggle': 'wiggle 1s ease-in-out infinite',
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
+              'spin-slow': 'spin 3s linear infinite',
             },
             keyframes: {
               float: {
@@ -40,6 +42,10 @@
               wiggle: {
                 '0%, 100%': { transform: 'rotate(-3deg)' },
                 '50%': { transform: 'rotate(3deg)' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
               }
             }
           },
@@ -48,21 +54,21 @@
     </script>
     <style>
       body {
-        background: linear-gradient(135deg, #4c1d95 0%, #2563eb 100%);
+        background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
         color: white;
         font-family: 'Fredoka', sans-serif;
         overflow-x: hidden;
         -webkit-tap-highlight-color: transparent;
       }
       
-      /* Glass Panel - Cartoon Style */
+      /* Glass Panel - Sophisticated */
       .glass-panel {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 24px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
       }
 
       /* Animated Background Bubbles */
@@ -115,6 +121,7 @@
   }
 }
 </script>
+<link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
@@ -124,5 +131,6 @@
       <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
       <div class="bubble"></div>
     </div>
-  </body>
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

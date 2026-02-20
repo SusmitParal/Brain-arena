@@ -57,6 +57,7 @@ export interface UserProfile {
   teamName?: string;   // If they belong to a team
   lastDailyClaim: number; // Timestamp of last daily reward
   streak: number;      // Current login streak days
+  selectedAvatar?: string; // ID of the selected avatar
 }
 
 export interface GameConfig {

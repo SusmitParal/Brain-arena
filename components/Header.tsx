@@ -4,6 +4,8 @@ import { Trophy, Coins, Star, Zap, Volume2, VolumeX, Gem } from 'lucide-react';
 import { calculateRank, calculateLevel } from '../constants';
 import { audioManager } from '../services/audioService';
 
+import { GAME_ITEMS } from '../constants';
+
 interface HeaderProps {
   user: UserProfile;
   onProfileClick: () => void;
@@ -13,6 +15,9 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick }) => {
   const rankInfo = calculateRank(user.stars);
   const levelInfo = calculateLevel(user.exp);
   const [isMuted, setIsMuted] = useState(audioManager.getMuteStatus());
+  
+  const selectedAvatarItem = GAME_ITEMS.find(i => i.id === user.selectedAvatar);
+  const avatarUrl = selectedAvatarItem?.content.startsWith('http') ? selectedAvatarItem.content : null;
 
   const handleMuteToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -29,8 +34,12 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick }) => {
         {/* Profile Section */}
         <div className="flex items-center space-x-3 cursor-pointer" onClick={onProfileClick}>
           <div className="relative group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-400 to-purple-500 flex items-center justify-center font-black text-2xl border-4 border-white shadow-lg transform group-hover:rotate-6 transition-transform">
-              {user.name.charAt(0)}
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-400 to-purple-500 flex items-center justify-center font-black text-2xl border-4 border-white shadow-lg transform group-hover:rotate-6 transition-transform overflow-hidden">
+              {avatarUrl ? (
+                  <img src={avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                  user.name.charAt(0)
+              )}
             </div>
             <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white">
               {levelInfo.level}

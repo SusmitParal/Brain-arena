@@ -92,29 +92,29 @@ export const TEAM_BOT_NAMES = [
 // --- GAME ITEMS DATABASE ---
 export const GAME_ITEMS: GameItem[] = [
   // --- ANIME & CARTOONS ---
-  { id: 'av_dora', type: 'AVATAR', name: 'Robo Cat (Future)', rarity: 'Legendary', content: '🐱🤖', priceCoins: 50000 },
-  { id: 'av_nobi', type: 'AVATAR', name: 'Glasses Boy', rarity: 'Epic', content: '👦👓', priceCoins: 35000 },
-  { id: 'av_mouse', type: 'AVATAR', name: 'Classic Mouse', rarity: 'Rare', content: '🐭', priceCoins: 5000 },
+  { id: 'av_dora', type: 'AVATAR', name: 'Robo Cat (Future)', rarity: 'Legendary', content: 'https://picsum.photos/seed/dora/200', priceCoins: 50000 },
+  { id: 'av_nobi', type: 'AVATAR', name: 'Glasses Boy', rarity: 'Epic', content: 'https://picsum.photos/seed/nobi/200', priceCoins: 35000 },
+  { id: 'av_mouse', type: 'AVATAR', name: 'Classic Mouse', rarity: 'Rare', content: 'https://picsum.photos/seed/mouse/200', priceCoins: 5000 },
 
   // --- CRICKET LEGENDS ---
-  { id: 'av_virat', type: 'AVATAR', name: 'King Kohli', rarity: 'Mythic', content: '🏏👑', priceCoins: 100000 },
-  { id: 'av_rohit', type: 'AVATAR', name: 'The Hitman', rarity: 'Mythic', content: '🏏🧢', priceCoins: 100000 },
-  { id: 'av_dhoni', type: 'AVATAR', name: 'Captain Cool', rarity: 'Legendary', content: '🏏🧤', priceCoins: 80000 },
+  { id: 'av_virat', type: 'AVATAR', name: 'King Kohli', rarity: 'Mythic', content: 'https://picsum.photos/seed/virat/200', priceCoins: 100000 },
+  { id: 'av_rohit', type: 'AVATAR', name: 'The Hitman', rarity: 'Mythic', content: 'https://picsum.photos/seed/rohit/200', priceCoins: 100000 },
+  { id: 'av_dhoni', type: 'AVATAR', name: 'Captain Cool', rarity: 'Legendary', content: 'https://picsum.photos/seed/dhoni/200', priceCoins: 80000 },
 
   // --- SUPERHEROES ---
-  { id: 'av_iron', type: 'AVATAR', name: 'Iron Avenger', rarity: 'Mythic', content: '🔴🦾', priceCoins: 150000 },
-  { id: 'av_cap', type: 'AVATAR', name: 'Captain Star', rarity: 'Legendary', content: '🛡️⭐', priceCoins: 75000 },
-  { id: 'av_spider', type: 'AVATAR', name: 'Web Slinger', rarity: 'Epic', content: '🕷️', priceCoins: 40000 },
-  { id: 'av_bat', type: 'AVATAR', name: 'Dark Knight', rarity: 'Legendary', content: '🦇', priceCoins: 90000 },
+  { id: 'av_iron', type: 'AVATAR', name: 'Iron Avenger', rarity: 'Mythic', content: 'https://picsum.photos/seed/iron/200', priceCoins: 150000 },
+  { id: 'av_cap', type: 'AVATAR', name: 'Captain Star', rarity: 'Legendary', content: 'https://picsum.photos/seed/cap/200', priceCoins: 75000 },
+  { id: 'av_spider', type: 'AVATAR', name: 'Web Slinger', rarity: 'Epic', content: 'https://picsum.photos/seed/spider/200', priceCoins: 40000 },
+  { id: 'av_bat', type: 'AVATAR', name: 'Dark Knight', rarity: 'Legendary', content: 'https://picsum.photos/seed/bat/200', priceCoins: 90000 },
   
   // --- FANTASY & MAGIC ---
-  { id: 'av_potter', type: 'AVATAR', name: 'Wizard Boy', rarity: 'Legendary', content: '⚡👓', priceCoins: 60000 },
-  { id: 'av_drag', type: 'AVATAR', name: 'Dragon Rider', rarity: 'Epic', content: '🐉', priceCoins: 25000 },
+  { id: 'av_potter', type: 'AVATAR', name: 'Wizard Boy', rarity: 'Legendary', content: 'https://picsum.photos/seed/potter/200', priceCoins: 60000 },
+  { id: 'av_drag', type: 'AVATAR', name: 'Dragon Rider', rarity: 'Epic', content: 'https://picsum.photos/seed/dragon/200', priceCoins: 25000 },
   
   // --- STANDARD ---
-  { id: 'av_1', type: 'AVATAR', name: 'Rookie Bot', rarity: 'Common', content: '🤖', priceCoins: 500 },
-  { id: 'av_2', type: 'AVATAR', name: 'Smart Owl', rarity: 'Common', content: '🦉', priceCoins: 1000 },
-  { id: 'av_3', type: 'AVATAR', name: 'Ninja', rarity: 'Rare', content: '🥷', priceCoins: 2500 },
+  { id: 'av_1', type: 'AVATAR', name: 'Rookie Bot', rarity: 'Common', content: 'https://picsum.photos/seed/bot1/200', priceCoins: 500 },
+  { id: 'av_2', type: 'AVATAR', name: 'Smart Owl', rarity: 'Common', content: 'https://picsum.photos/seed/owl/200', priceCoins: 1000 },
+  { id: 'av_3', type: 'AVATAR', name: 'Ninja', rarity: 'Rare', content: 'https://picsum.photos/seed/ninja/200', priceCoins: 2500 },
 
   // FRAMES
   { id: 'fr_1', type: 'FRAME', name: 'Wooden Border', rarity: 'Common', content: 'border-amber-700', priceCoins: 500 },

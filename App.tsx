@@ -9,6 +9,8 @@ import Store from './pages/Store';
 import SocialHub from './pages/SocialHub';
 import TeamLobby from './pages/TeamLobby';
 import TeamBattle from './pages/TeamBattle';
+import Leaderboard from './pages/Leaderboard';
+import Tournaments from './pages/Tournaments';
 import Button from './components/Button';
 import { UserProfile, ScreenState, GameResult, Language, ChestTier, UserChest } from './types';
 import { ENTRY_FEES, TEAM_BATTLE_TIERS, calculateLevel, calculateRank } from './constants';
@@ -33,7 +35,8 @@ const INITIAL_USER: UserProfile = {
   chests: [],
   friends: [],
   lastDailyClaim: 0,
-  streak: 0
+  streak: 0,
+  selectedAvatar: 'av_1'
 };
 
 const App: React.FC = () => {
@@ -421,6 +424,12 @@ const App: React.FC = () => {
            </div>
          );
       
+      case 'LEADERBOARD':
+        return <Leaderboard user={user} onNavigate={setScreen} />;
+
+      case 'TOURNAMENTS':
+        return <Tournaments user={user} onNavigate={setScreen} />;
+
       case 'SETTINGS':
         return (
           <div className="flex-1 p-6">

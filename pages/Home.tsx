@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../components/Button';
 import { UserProfile, UserChest } from '../types';
 import { CHEST_DATA } from '../constants';
@@ -89,16 +90,19 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
   };
 
   const handleSpinWheel = () => {
+      if (spinning) return;
       setSpinning(true);
       audioManager.playSFX('click');
+      
+      // Spin duration 3s
       setTimeout(() => {
           const outcomes = [
-              { label: '500 Coins', coins: 500, gems: 0 },
-              { label: '1000 Coins', coins: 1000, gems: 0 },
-              { label: '10 Gems', coins: 0, gems: 10 },
-              { label: '50 Gems', coins: 0, gems: 50 },
-              { label: 'JACKPOT', coins: 5000, gems: 100 },
-              { label: '200 Coins', coins: 200, gems: 0 },
+              { label: '500 Coins', coins: 500, gems: 0, color: '#3b82f6' },
+              { label: '1000 Coins', coins: 1000, gems: 0, color: '#8b5cf6' },
+              { label: '10 Gems', coins: 0, gems: 10, color: '#ec4899' },
+              { label: '50 Gems', coins: 0, gems: 50, color: '#14b8a6' },
+              { label: 'JACKPOT', coins: 5000, gems: 100, color: '#eab308' },
+              { label: '200 Coins', coins: 200, gems: 0, color: '#64748b' },
           ];
           const rand = Math.random();
           let winIndex = 0;
@@ -106,8 +110,12 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
           else if (rand < 0.15) winIndex = 3;
           else if (rand < 0.3) winIndex = 2;
           else if (rand < 0.6) winIndex = 1;
-          else winIndex = 0;
+          else winIndex = 0; // 200 Coins (most common) or 500
           
+          // Force win index logic correction
+          if (rand >= 0.6) winIndex = 5; // 200 Coins
+          else if (rand >= 0.3 && rand < 0.6) winIndex = 0; // 500 Coins
+
           const win = outcomes[winIndex];
           setSpinResult(win.label);
           setSpinning(false);
@@ -323,9 +331,16 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
       </div>
 
       {/* DAILY REWARD MODAL */}
+      <AnimatePresence>
       {showDailyRewards && (
-           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in px-4">
-               <div className="bg-white border-b-8 border-purple-300 rounded-3xl p-8 max-w-sm w-full text-center relative overflow-hidden shadow-2xl">
+           <motion.div 
+             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+             className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md px-4"
+           >
+               <motion.div 
+                 initial={{ scale: 0.8, y: 50 }} animate={{ scale: 1, y: 0 }}
+                 className="bg-white border-b-8 border-purple-300 rounded-3xl p-8 max-w-sm w-full text-center relative overflow-hidden shadow-2xl"
+               >
                    
                    {!spinResult ? (
                        <>
@@ -334,13 +349,33 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
                                Streak: <span className="text-orange-500">{user.streak} Days 🔥</span>
                            </p>
                            
-                           <div className={`relative w-48 h-48 mx-auto mb-8 transition-transform duration-[3000ms] ease-out ${spinning ? 'rotate-[1080deg]' : ''}`}>
-                               <div className="w-full h-full rounded-full border-8 border-purple-500 bg-white relative flex items-center justify-center overflow-hidden shadow-inner">
-                                   <div className="absolute inset-0 bg-[conic-gradient(from_0deg,#f3e8ff,#d8b4fe,#f3e8ff)]"></div>
-                                   {spinning ? <Loader2 size={64} className="text-purple-500 animate-spin relative z-10"/> : <Gift size={64} className="text-yellow-500 animate-bounce relative z-10 drop-shadow-md"/>}
-                               </div>
+                           <div className="relative w-64 h-64 mx-auto mb-8">
+                               {/* Wheel */}
+                               <motion.div 
+                                 animate={{ rotate: spinning ? 360 * 5 + Math.random() * 360 : 0 }}
+                                 transition={{ duration: 3, ease: "easeInOut" }}
+                                 className="w-full h-full rounded-full border-8 border-purple-500 relative overflow-hidden shadow-inner"
+                                 style={{
+                                   background: `conic-gradient(
+                                     #3b82f6 0deg 60deg, 
+                                     #8b5cf6 60deg 120deg, 
+                                     #ec4899 120deg 180deg, 
+                                     #14b8a6 180deg 240deg, 
+                                     #eab308 240deg 300deg, 
+                                     #64748b 300deg 360deg
+                                   )`
+                                 }}
+                               >
+                                  {/* Segments Text (Simplified) */}
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-2 h-2 bg-white rounded-full z-10"></div>
+                                  </div>
+                               </motion.div>
+                               
                                {/* Pointer */}
-                               <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-red-500 rotate-45 border-4 border-white z-20 shadow-md"></div>
+                               <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-12 bg-red-500 z-20 shadow-md flex items-end justify-center pb-1" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 50% 100%)' }}>
+                                 <div className="w-2 h-2 bg-white rounded-full mb-4"></div>
+                               </div>
                            </div>
                            
                            <Button variant="primary" size="lg" disabled={spinning} onClick={handleSpinWheel} className="w-full relative z-10 text-xl">
@@ -348,18 +383,19 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
                            </Button>
                        </>
                    ) : (
-                       <>
-                           <h2 className="text-4xl font-black text-yellow-500 mb-6 relative z-10 drop-shadow-sm">JACKPOT!</h2>
+                       <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+                           <h2 className="text-4xl font-black text-yellow-500 mb-6 relative z-10 drop-shadow-sm">WINNER!</h2>
                            <div className="text-3xl font-black text-slate-800 mb-2">{spinResult}</div>
                            <p className="text-gray-400 mb-8 font-bold">Come back tomorrow!</p>
                            <Button variant="gold" size="lg" onClick={() => { setShowDailyRewards(false); setSpinResult(null); }} className="w-full relative z-10 text-xl">
-                               CLAIM
+                               CLAIM REWARD
                            </Button>
-                       </>
+                       </motion.div>
                    )}
-               </div>
-           </div>
+               </motion.div>
+           </motion.div>
       )}
+      </AnimatePresence>
 
       {/* CHEST REWARD MODAL */}
       {rewardModal && (
@@ -382,9 +418,13 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
                    </div>
 
                    {rewardModal.item && (
-                       <div className="bg-slate-50 p-4 rounded-2xl mb-6 border-2 border-slate-100 relative z-10">
+                       <div className="bg-slate-50 p-4 rounded-2xl mb-6 border-2 border-slate-100 relative z-10 flex flex-col items-center">
                            <div className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">New Item Unlocked!</div>
-                           <div className="text-6xl mb-2 filter drop-shadow-lg transform hover:scale-110 transition-transform cursor-pointer">{rewardModal.item.content}</div>
+                           {rewardModal.item.content.startsWith('http') ? (
+                               <img src={rewardModal.item.content} alt={rewardModal.item.name} className="w-24 h-24 rounded-full border-4 border-white shadow-lg mb-2 object-cover" />
+                           ) : (
+                               <div className="text-6xl mb-2 filter drop-shadow-lg transform hover:scale-110 transition-transform cursor-pointer">{rewardModal.item.content}</div>
+                           )}
                            <div className={`text-xl font-black ${
                                rewardModal.item.rarity === 'Legendary' ? 'text-yellow-500' : 'text-slate-800'
                            }`}>

@@ -3,7 +3,7 @@ import { UserProfile, Teammate } from '../types';
 import Button from '../components/Button';
 import { Users, Search, Copy, Shield, Plus, UserPlus, CheckCircle } from 'lucide-react';
 import { audioManager } from '../services/audioService';
-import { TEAM_BOT_NAMES } from '../constants';
+import { TEAM_BOT_NAMES, GAME_ITEMS } from '../constants';
 
 interface SocialHubProps {
   user: UserProfile;
@@ -40,7 +40,7 @@ const SocialHub: React.FC<SocialHubProps> = ({ user, onUpdateUser, onNavigate })
         id: `friend_${Date.now()}`,
         name: TEAM_BOT_NAMES[Math.floor(Math.random() * TEAM_BOT_NAMES.length)],
         isOnline: true,
-        avatar: '👤'
+        avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${Date.now()}`
       };
       onUpdateUser({
         ...user,
@@ -117,7 +117,13 @@ const SocialHub: React.FC<SocialHubProps> = ({ user, onUpdateUser, onNavigate })
                  user.friends.map(friend => (
                    <div key={friend.id} className="flex items-center justify-between bg-slate-800/50 p-3 rounded-lg border border-white/5">
                      <div className="flex items-center gap-3">
-                       <div className="text-2xl">{friend.avatar}</div>
+                       <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-700 border border-white/20">
+                           {friend.avatar.startsWith('http') ? (
+                               <img src={friend.avatar} alt={friend.name} className="w-full h-full object-cover" />
+                           ) : (
+                               <div className="w-full h-full flex items-center justify-center text-xl">{friend.avatar}</div>
+                           )}
+                       </div>
                        <span className="font-bold text-white">{friend.name}</span>
                      </div>
                      <div className="flex items-center gap-2 text-xs">
@@ -170,7 +176,13 @@ const SocialHub: React.FC<SocialHubProps> = ({ user, onUpdateUser, onNavigate })
                    <div className="grid grid-cols-1 gap-2">
                       <div className="flex items-center justify-between bg-white/5 p-3 rounded-lg border border-cyan-500/30">
                          <div className="flex items-center gap-3">
-                           <span className="text-2xl">😎</span>
+                           {(() => {
+                               const userAvatarItem = GAME_ITEMS.find(i => i.id === (user.selectedAvatar || 'av_1'));
+                               const url = userAvatarItem?.content || 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=rookie';
+                               return url.startsWith('http') ? 
+                                 <img src={url} alt="me" className="w-10 h-10 rounded-full border border-cyan-400 bg-slate-800 object-cover"/> : 
+                                 <span className="text-2xl">{url}</span>;
+                           })()}
                            <div>
                               <div className="font-bold text-cyan-400">{user.name} (You)</div>
                               <div className="text-[10px] text-gray-500">Captain</div>
@@ -182,7 +194,10 @@ const SocialHub: React.FC<SocialHubProps> = ({ user, onUpdateUser, onNavigate })
                       {user.friends.slice(0, 3).map(f => (
                          <div key={f.id} className="flex items-center justify-between bg-white/5 p-3 rounded-lg border border-white/5">
                             <div className="flex items-center gap-3">
-                              <span className="text-2xl">{f.avatar}</span>
+                              {f.avatar.startsWith('http') ? 
+                                <img src={f.avatar} alt={f.name} className="w-10 h-10 rounded-full bg-slate-700 object-cover"/> : 
+                                <span className="text-2xl">{f.avatar}</span>
+                              }
                               <div className="font-bold text-gray-300">{f.name}</div>
                             </div>
                             <span className="text-green-400 text-xs font-bold">Online</span>
