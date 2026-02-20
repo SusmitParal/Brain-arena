@@ -8,11 +8,11 @@ interface LeaderboardProps {
 }
 
 const MOCK_LEADERS = [
-  { name: "CyberKing", score: 25000, avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=cyber" },
-  { name: "QueenBee", score: 24500, avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=queen" },
-  { name: "NinjaX", score: 23000, avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=ninja" },
-  { name: "Brainiac", score: 21000, avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=brain" },
-  { name: "Speedster", score: 19500, avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=speed" },
+  { name: "CyberKing", score: 25000, avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=cyber", isUser: false },
+  { name: "QueenBee", score: 24500, avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=queen", isUser: false },
+  { name: "NinjaX", score: 23000, avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=ninja", isUser: false },
+  { name: "Brainiac", score: 21000, avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=brain", isUser: false },
+  { name: "Speedster", score: 19500, avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=speed", isUser: false },
 ];
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ user, onExit }) => {

@@ -292,22 +292,42 @@ const App: React.FC = () => {
              </div>
             
             <div className="grid grid-cols-1 w-full max-w-md gap-6">
-               <div onClick={() => startSoloGame('Beginner')} className="group cursor-pointer bg-slate-900/50 border border-green-500/30 hover:border-green-400 p-6 rounded-xl transition-all hover:bg-slate-800/80 flex items-center justify-between">
-                 <div className="flex items-center space-x-4">
-                    <div className="p-3 rounded-full bg-green-500/10 text-green-400 group-hover:scale-110 transition-transform"><Zap size={24} /></div>
-                    <div><h3 className="text-xl font-orbitron text-white">Beginner</h3><p className="text-xs text-gray-500">Warm up your neurons.</p></div>
+               <div onClick={() => startSoloGame('Beginner')} className="group relative cursor-pointer h-24 rounded-2xl transition-all overflow-hidden border-2 border-green-500/30 hover:border-green-400 shadow-lg">
+                 <div className="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop" alt="beginner" className="w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent"></div>
+                 </div>
+                 <div className="relative z-10 flex items-center justify-between px-6 h-full">
+                    <div className="flex items-center space-x-4">
+                       <div className="p-3 rounded-xl bg-green-500/20 text-green-400 group-hover:rotate-6 transition-transform"><Zap size={24} /></div>
+                       <div><h3 className="text-xl font-orbitron text-white">Beginner</h3><p className="text-xs text-gray-400">Warm up your neurons.</p></div>
+                    </div>
                  </div>
                </div>
-               <div onClick={() => startSoloGame('Intermediate')} className="group cursor-pointer bg-slate-900/50 border border-yellow-500/30 hover:border-yellow-400 p-6 rounded-xl transition-all hover:bg-slate-800/80 flex items-center justify-between">
-                 <div className="flex items-center space-x-4">
-                    <div className="p-3 rounded-full bg-yellow-500/10 text-yellow-400 group-hover:scale-110 transition-transform"><Trophy size={24} /></div>
-                    <div><h3 className="text-xl font-orbitron text-white">Intermediate</h3><p className="text-xs text-gray-500">Standard competitive level.</p></div>
+
+               <div onClick={() => startSoloGame('Intermediate')} className="group relative cursor-pointer h-24 rounded-2xl transition-all overflow-hidden border-2 border-yellow-500/30 hover:border-yellow-400 shadow-lg">
+                 <div className="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=800&auto=format&fit=crop" alt="intermediate" className="w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent"></div>
+                 </div>
+                 <div className="relative z-10 flex items-center justify-between px-6 h-full">
+                    <div className="flex items-center space-x-4">
+                       <div className="p-3 rounded-xl bg-yellow-500/20 text-yellow-400 group-hover:rotate-6 transition-transform"><Trophy size={24} /></div>
+                       <div><h3 className="text-xl font-orbitron text-white">Intermediate</h3><p className="text-xs text-gray-400">Standard competitive level.</p></div>
+                    </div>
                  </div>
                </div>
-               <div onClick={() => startSoloGame('Expert')} className="group cursor-pointer bg-slate-900/50 border border-red-500/30 hover:border-red-400 p-6 rounded-xl transition-all hover:bg-slate-800/80 flex items-center justify-between">
-                 <div className="flex items-center space-x-4">
-                    <div className="p-3 rounded-full bg-red-500/10 text-red-400 group-hover:scale-110 transition-transform"><ShieldAlert size={24} /></div>
-                    <div><h3 className="text-xl font-orbitron text-white">Expert</h3><p className="text-xs text-gray-500">High IQ required. Extreme mix.</p></div>
+
+               <div onClick={() => startSoloGame('Expert')} className="group relative cursor-pointer h-24 rounded-2xl transition-all overflow-hidden border-2 border-red-500/30 hover:border-red-400 shadow-lg">
+                 <div className="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" alt="expert" className="w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent"></div>
+                 </div>
+                 <div className="relative z-10 flex items-center justify-between px-6 h-full">
+                    <div className="flex items-center space-x-4">
+                       <div className="p-3 rounded-xl bg-red-500/20 text-red-400 group-hover:rotate-6 transition-transform"><ShieldAlert size={24} /></div>
+                       <div><h3 className="text-xl font-orbitron text-white">Expert</h3><p className="text-xs text-gray-400">High IQ required. Extreme mix.</p></div>
+                    </div>
                  </div>
                </div>
             </div>

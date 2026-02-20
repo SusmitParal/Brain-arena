@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile, GameResult, Question, ChatMessage } from '../types';
 import { fetchQuestions } from '../services/geminiService';
-import { TEAM_BOT_NAMES } from '../constants';
+import { TEAM_BOT_NAMES, MOCK_QUESTIONS } from '../constants';
 import Button from '../components/Button';
 import { audioManager } from '../services/audioService';
 import { Shield, Zap, Swords, Mic, MessageSquare, Skull } from 'lucide-react';
@@ -19,7 +19,7 @@ const TeamBattle: React.FC<TeamBattleProps> = ({ user, tierAmount, rewardGems, d
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [stage, setStage] = useState<'LOADING' | 'PLAYING' | 'FINISHED'>('LOADING');
   
-  // 7 Players per team
+  // 5 Players per team
   const [myTeamScore, setMyTeamScore] = useState(0);
   const [enemyTeamScore, setEnemyTeamScore] = useState(0);
   
@@ -32,10 +32,18 @@ const TeamBattle: React.FC<TeamBattleProps> = ({ user, tierAmount, rewardGems, d
 
   useEffect(() => {
     const init = async () => {
-       const qs = await fetchQuestions(difficulty, user.language, 10);
-       setQuestions(qs);
-       setStage('PLAYING');
-       addLog("System", "Match Started! Let's GO!", true);
+       try {
+         const qs = await fetchQuestions(difficulty, user.language, 10);
+         if (!qs || qs.length === 0) throw new Error("No questions");
+         setQuestions(qs);
+         setStage('PLAYING');
+         addLog("System", "Match Started! Let's GO!", true);
+       } catch (err) {
+         console.error("TeamBattle Init Error:", err);
+         setQuestions(MOCK_QUESTIONS.slice(0, 10));
+         setStage('PLAYING');
+         addLog("System", "Match Started (Offline Mode)!", true);
+       }
     };
     init();
   }, []);
@@ -52,6 +60,7 @@ const TeamBattle: React.FC<TeamBattleProps> = ({ user, tierAmount, rewardGems, d
     if (stage !== 'PLAYING') return;
 
     const currentQ = questions[currentQIndex];
+    if (!currentQ) return;
     const isCorrect = option === currentQ.answer;
 
     // 1. My Contribution
@@ -63,21 +72,21 @@ const TeamBattle: React.FC<TeamBattleProps> = ({ user, tierAmount, rewardGems, d
        audioManager.playSFX('wrong');
     }
 
-    // 2. Simulate Teammates (6 Bots)
+    // 2. Simulate Teammates (4 Bots)
     let teammatesScore = 0;
-    for(let i=0; i<6; i++) {
+    for(let i=0; i<4; i++) {
         if (Math.random() > 0.4) teammatesScore += 10;
     }
     
-    // 3. Simulate Enemy Team (7 Bots)
+    // 3. Simulate Enemy Team (5 Bots)
     let enemyRoundScore = 0;
-    for(let i=0; i<7; i++) {
+    for(let i=0; i<5; i++) {
         if (Math.random() > 0.35) enemyRoundScore += 10;
     }
 
     // Chatter simulation
     if (Math.random() > 0.7) {
-       const speaker = TEAM_BOT_NAMES[Math.floor(Math.random() * 6)]; // First 6 bots are teammates
+       const speaker = TEAM_BOT_NAMES[Math.floor(Math.random() * 4)]; // First 4 bots are teammates
        const msgs = ["I got this!", "Easy peasy!", "Help me out!", "Boom!", "Score!"];
        addLog(speaker, msgs[Math.floor(Math.random() * msgs.length)]);
     }
@@ -98,7 +107,7 @@ const TeamBattle: React.FC<TeamBattleProps> = ({ user, tierAmount, rewardGems, d
      const won = finalMyScore > finalEnemyScore;
      
      const totalPot = tierAmount * 2;
-     const myShare = Math.floor(totalPot / 7);
+     const myShare = Math.floor(totalPot / 5);
      
      const result: GameResult = {
         won,
@@ -107,7 +116,7 @@ const TeamBattle: React.FC<TeamBattleProps> = ({ user, tierAmount, rewardGems, d
         expEarned: won ? 500 : 50,
         starsEarned: won ? 5 : 0,
         ratingChange: won ? 50 : -25,
-        correctAnswers: Math.floor(finalMyScore / 10 / 7),
+        correctAnswers: Math.floor(finalMyScore / 10 / 5),
         totalQuestions: questions.length,
         chestEarned: undefined, 
         isTeamMatch: true
@@ -167,9 +176,9 @@ const TeamBattle: React.FC<TeamBattleProps> = ({ user, tierAmount, rewardGems, d
           <div className="flex flex-col items-start">
              <div className="text-xs text-blue-200 uppercase tracking-widest font-black">{user.teamName || "Blue Team"}</div>
              <div className="text-4xl font-black text-white drop-shadow-md">{myTeamScore}</div>
-             {/* 7 dots for players */}
+             {/* 5 dots for players */}
              <div className="flex gap-1 mt-1">
-                {Array.from({length:7}).map((_,i) => <div key={i} className="w-2 h-2 rounded-full bg-blue-400 shadow-sm"></div>)}
+                {Array.from({length:5}).map((_,i) => <div key={i} className="w-2 h-2 rounded-full bg-blue-400 shadow-sm"></div>)}
              </div>
           </div>
 
@@ -184,7 +193,7 @@ const TeamBattle: React.FC<TeamBattleProps> = ({ user, tierAmount, rewardGems, d
              <div className="text-xs text-red-200 uppercase tracking-widest font-black">{enemyTeamName}</div>
              <div className="text-4xl font-black text-white drop-shadow-md">{enemyTeamScore}</div>
              <div className="flex gap-1 mt-1">
-                {Array.from({length:7}).map((_,i) => <div key={i} className="w-2 h-2 rounded-full bg-red-400 shadow-sm"></div>)}
+                {Array.from({length:5}).map((_,i) => <div key={i} className="w-2 h-2 rounded-full bg-red-400 shadow-sm"></div>)}
              </div>
           </div>
        </div>

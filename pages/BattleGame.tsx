@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile, Question, GameResult } from '../types';
 import Button from '../components/Button';
 import { fetchQuestions } from '../services/geminiService';
+import { MOCK_QUESTIONS } from '../constants';
 import { Loader2, Swords, Trophy, User, Shield, Zap, Infinity } from 'lucide-react';
 import { audioManager } from '../services/audioService';
 
@@ -42,9 +43,15 @@ const BattleGame: React.FC<BattleGameProps> = ({ user, entryFee, difficulty, que
   useEffect(() => {
     if (stage === 'VERSUS') {
       const initGame = async () => {
-        const q = await fetchQuestions(difficulty, user.language, 5);
-        setQuestions(q);
-        setTimeout(() => setStage('PLAYING'), 3000);
+        try {
+          const q = await fetchQuestions(difficulty, user.language, 5);
+          setQuestions(q);
+        } catch (err) {
+          console.error("BattleGame Init Error:", err);
+          setQuestions(MOCK_QUESTIONS.slice(0, 5));
+        } finally {
+          setTimeout(() => setStage('PLAYING'), 3000);
+        }
       };
       initGame();
     }

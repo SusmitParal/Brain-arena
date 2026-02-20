@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile, Question, GameResult } from '../types';
 import Button from '../components/Button';
 import { fetchQuestions } from '../services/geminiService';
+import { MOCK_QUESTIONS } from '../constants';
 import { Loader2, CheckCircle, XCircle, Clock, BrainCircuit } from 'lucide-react';
 import { audioManager } from '../services/audioService';
 
@@ -27,12 +28,20 @@ const SoloGame: React.FC<SoloGameProps> = ({ user, category, difficulty, onGameE
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      // Fetch questions using the mixed topic logic
-      const q = await fetchQuestions(difficulty, user.language, 5);
-      setQuestions(q);
-      setLoading(false);
-      setGameState('PLAYING');
-      startTimer();
+      try {
+        // Fetch questions using the mixed topic logic
+        const q = await fetchQuestions(difficulty, user.language, 5);
+        setQuestions(q);
+        setLoading(false);
+        setGameState('PLAYING');
+        startTimer();
+      } catch (err) {
+        console.error("SoloGame Load Error:", err);
+        setQuestions(MOCK_QUESTIONS.slice(0, 5));
+        setLoading(false);
+        setGameState('PLAYING');
+        startTimer();
+      }
     };
     loadData();
     return () => stopTimer();

@@ -231,11 +231,12 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
       {/* Main Actions - Primary Cards */}
       <div className="w-full max-w-md grid grid-cols-1 gap-4">
         <button 
-          className="relative group w-full h-28 rounded-3xl bg-gradient-to-r from-blue-500 to-blue-400 border-b-8 border-blue-700 active:border-b-0 active:translate-y-2 transition-all shadow-xl overflow-hidden"
+          className="relative group w-full h-28 rounded-3xl bg-blue-600 border-b-8 border-blue-800 active:border-b-0 active:translate-y-2 transition-all shadow-xl overflow-hidden"
           onClick={() => onNavigate('MODE_SELECT_SOLO')}
         >
-          <div className="absolute -right-4 -bottom-4 text-blue-300/30 transform rotate-12">
-             <Zap size={120} fill="currentColor"/>
+          <div className="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=800&auto=format&fit=crop" alt="solo" className="w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-600/80 to-transparent"></div>
           </div>
           <div className="relative z-10 flex items-center justify-between px-6 h-full">
              <div className="flex items-center space-x-4">
@@ -244,18 +245,19 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
                 </div>
                 <div className="text-left">
                   <h3 className="text-3xl font-black text-white italic drop-shadow-md">SOLO QUIZ</h3>
-                  <p className="text-xs text-blue-100 font-bold uppercase tracking-wider bg-blue-600/30 inline-block px-2 rounded">Train Brain</p>
+                  <p className="text-xs text-blue-100 font-bold uppercase tracking-wider bg-blue-900/30 inline-block px-2 rounded">Train Brain</p>
                 </div>
              </div>
           </div>
         </button>
 
         <button 
-          className="relative group w-full h-28 rounded-3xl bg-gradient-to-r from-red-500 to-orange-500 border-b-8 border-red-700 active:border-b-0 active:translate-y-2 transition-all shadow-xl overflow-hidden"
+          className="relative group w-full h-28 rounded-3xl bg-red-600 border-b-8 border-red-800 active:border-b-0 active:translate-y-2 transition-all shadow-xl overflow-hidden"
           onClick={() => onNavigate('MODE_SELECT_BATTLE')}
         >
-          <div className="absolute -right-4 -bottom-4 text-red-300/30 transform -rotate-12">
-             <Swords size={120} />
+          <div className="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop" alt="battle" className="w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-600/80 to-transparent"></div>
           </div>
           <div className="relative z-10 flex items-center justify-between px-6 h-full">
              <div className="flex items-center space-x-4">
@@ -264,27 +266,41 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
                 </div>
                 <div className="text-left">
                   <h3 className="text-3xl font-black text-white italic drop-shadow-md">BATTLE</h3>
-                  <p className="text-xs text-red-100 font-bold uppercase tracking-wider bg-red-600/30 inline-block px-2 rounded">PvP Arena</p>
+                  <p className="text-xs text-red-100 font-bold uppercase tracking-wider bg-red-900/30 inline-block px-2 rounded">PvP Arena</p>
                 </div>
              </div>
           </div>
         </button>
 
+
+
         <div className="grid grid-cols-2 gap-4">
              <button 
-              className="relative group w-full h-24 rounded-3xl bg-purple-500 border-b-8 border-purple-700 active:border-b-0 active:translate-y-2 transition-all shadow-lg flex flex-col items-center justify-center text-white"
+              className="relative group w-full h-24 rounded-3xl bg-purple-500 border-b-8 border-purple-700 active:border-b-0 active:translate-y-2 transition-all shadow-lg overflow-hidden flex flex-col items-center justify-center text-white"
               onClick={() => onNavigate('PASS_N_PLAY')}
             >
-              <Smartphone size={28} className="mb-1 opacity-80"/>
-              <span className="text-lg font-black leading-none">PASS 'N<br/>PLAY</span>
+              <div className="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop" alt="passnplay" className="w-full h-full object-cover opacity-30 group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-purple-600/60"></div>
+              </div>
+              <div className="relative z-10 flex flex-col items-center">
+                <Smartphone size={28} className="mb-1 opacity-80"/>
+                <span className="text-lg font-black leading-none text-center">PASS 'N<br/>PLAY</span>
+              </div>
             </button>
             
             <button 
-              className="relative group w-full h-24 rounded-3xl bg-yellow-400 border-b-8 border-yellow-600 active:border-b-0 active:translate-y-2 transition-all shadow-lg flex flex-col items-center justify-center text-yellow-900"
+              className="relative group w-full h-24 rounded-3xl bg-yellow-400 border-b-8 border-yellow-600 active:border-b-0 active:translate-y-2 transition-all shadow-lg overflow-hidden flex flex-col items-center justify-center text-yellow-900"
               onClick={() => onNavigate('STORE')}
             >
-              <ShoppingBag size={28} className="mb-1 opacity-80"/>
-              <span className="text-lg font-black leading-none">SHOP</span>
+              <div className="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=800&auto=format&fit=crop" alt="shop" className="w-full h-full object-cover opacity-30 group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-yellow-400/60"></div>
+              </div>
+              <div className="relative z-10 flex flex-col items-center">
+                <ShoppingBag size={28} className="mb-1 opacity-80"/>
+                <span className="text-lg font-black leading-none text-center">SHOP</span>
+              </div>
             </button>
         </div>
       </div>
@@ -366,9 +382,27 @@ const Home: React.FC<HomeProps> = ({ user, onNavigate, onUpdateUser }) => {
                                    )`
                                  }}
                                >
-                                  {/* Segments Text (Simplified) */}
+                                  {/* Segments Text */}
+                                  {[
+                                    { label: '500', angle: 30 },
+                                    { label: '1000', angle: 90 },
+                                    { label: '10G', angle: 150 },
+                                    { label: '50G', angle: 210 },
+                                    { label: 'JACKPOT', angle: 270 },
+                                    { label: '200', angle: 330 },
+                                  ].map((seg, i) => (
+                                    <div 
+                                      key={i}
+                                      className="absolute inset-0 flex items-start justify-center pt-4"
+                                      style={{ transform: `rotate(${seg.angle}deg)` }}
+                                    >
+                                      <span className="text-[10px] font-black text-white drop-shadow-md transform rotate-180" style={{ writingMode: 'vertical-rl' }}>
+                                        {seg.label}
+                                      </span>
+                                    </div>
+                                  ))}
                                   <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="w-2 h-2 bg-white rounded-full z-10"></div>
+                                    <div className="w-4 h-4 bg-white rounded-full z-10 shadow-md"></div>
                                   </div>
                                </motion.div>
                                
