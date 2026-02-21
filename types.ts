@@ -42,8 +42,8 @@ export interface UserProfile {
   id: string;         // Internal UUID
   friendCode: string; // Public 6-digit ID for friends
   name: string;
-  coins: number;
-  gems: number;       // Premium Currency
+  sps: number;
+  rds: number;       // Premium Currency
   exp: number;        // Total Cumulative Experience Points
   stars: number;      // Total Stars collected (Determines Rank)
   level: number;      // Player Level (Calculated from EXP)
@@ -58,6 +58,7 @@ export interface UserProfile {
   lastDailyClaim: number; // Timestamp of last daily reward
   streak: number;      // Current login streak days
   selectedAvatar?: string; // ID of the selected avatar
+  bronzeChestPenaltyMatches: number; // Number of matches with bronze chest penalty
 }
 
 export interface GameConfig {
@@ -74,7 +75,7 @@ export type ScreenState = 'HOME' | 'MODE_SELECT' | 'GAME_LOBBY' | 'GAME_PLAY' | 
 export interface GameResult {
   won: boolean;
   score: number;
-  coinsEarned: number;
+  spsEarned: number;
   expEarned: number;
   starsEarned: number;
   ratingChange: number;

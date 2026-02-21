@@ -17,7 +17,7 @@ export const ENTRY_FEES = [
     difficulty: "Beginner", 
     questionCount: 25,
     icon: "🇮🇳",
-    img: "https://images.unsplash.com/photo-1564507592333-c60657eaa0ae?q=80&w=800&auto=format&fit=crop" 
+    img: "https://picsum.photos/seed/delhi/800/600?blur=2" 
   },
   { 
     amount: 500, 
@@ -25,7 +25,7 @@ export const ENTRY_FEES = [
     difficulty: "Beginner", 
     questionCount: 50,
     icon: "🐯",
-    img: "https://images.unsplash.com/photo-1590050752117-23a9d7fc6f8a?q=80&w=800&auto=format&fit=crop"
+    img: "https://picsum.photos/seed/calcutta/800/600?blur=2"
   },
   { 
     amount: 1000, 
@@ -41,7 +41,7 @@ export const ENTRY_FEES = [
     difficulty: "Intermediate", 
     questionCount: 100,
     icon: "🌸",
-    img: "https://images.unsplash.com/photo-1540609651531-dc5567338f80?q=80&w=800&auto=format&fit=crop"
+    img: "https://picsum.photos/seed/beijing/800/600?blur=2"
   },
   { 
     amount: 5000, 

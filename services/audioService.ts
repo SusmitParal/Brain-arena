@@ -12,6 +12,7 @@ class AudioService {
       click: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',   // Click
       win: 'https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3',     // Victory Fanfare
       lose: 'https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3',    // Defeat
+      coin_collect: 'https://assets.mixkit.co/active_storage/sfx/2009/2009-preview.mp3' // Coin collect sound
     };
   }
 
@@ -67,7 +68,7 @@ class AudioService {
     }
   }
 
-  playSFX(type: 'correct' | 'wrong' | 'click' | 'win' | 'lose') {
+  playSFX(type: 'correct' | 'wrong' | 'click' | 'win' | 'lose' | 'coin_collect') {
     if (this.isMuted || !this.sfx[type]) return;
     
     const audio = new Audio(this.sfx[type]);
