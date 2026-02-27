@@ -29,7 +29,7 @@ export const PVP_ARENAS: Arena[] = [
     entryFee: 1000,
     prizePool: 2000,
     minLevel: 5,
-    difficulty: 'Medium'
+    difficulty: 'Easy'
   },
   {
     id: 'arena_paris',
@@ -39,7 +39,7 @@ export const PVP_ARENAS: Arena[] = [
     entryFee: 2500,
     prizePool: 5000,
     minLevel: 8,
-    difficulty: 'Medium'
+    difficulty: 'Easy'
   },
   {
     id: 'arena_newyork',
@@ -49,7 +49,7 @@ export const PVP_ARENAS: Arena[] = [
     entryFee: 5000,
     prizePool: 10000,
     minLevel: 10,
-    difficulty: 'Medium'
+    difficulty: 'Easy'
   },
   {
     id: 'arena_tokyo',

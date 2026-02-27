@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    @apply antialiased text-gray-100 bg-[#020617]; /* Very dark navy/black */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+  
+  .neon-glow-blue {
+    @apply shadow-[0_0_20px_rgba(59,130,246,0.3)] border-blue-500/50;
+  }
+  
+  .neon-glow-purple {
+    @apply shadow-[0_0_20px_rgba(168,85,247,0.3)] border-purple-500/50;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .rotate-y-12 {
+    transform: rotateY(12deg);
+  }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-shine {
+  animation: shine 1.5s infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; filter: blur(100px); }
+  50% { opacity: 0.8; filter: blur(120px); }
+}
+
+.bg-home {
+  background: radial-gradient(circle at top right, rgba(29, 78, 216, 0.15), transparent),
+              radial-gradient(circle at bottom left, rgba(126, 34, 206, 0.15), transparent),
+              #020617;
+}
+
+.bg-solo-climb {
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.1), transparent),
+              #020617;
+}
+
+.bg-pvp-game {
+  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.2), transparent),
+              #020617;
+}
+
+.bg-lobby {
+  background: radial-gradient(circle at bottom, rgba(168, 85, 247, 0.2), transparent),
+              #020617;
+}
+
+.bg-welcome {
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.3), transparent),
+              #020617;
+}

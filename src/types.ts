@@ -2,9 +2,10 @@
 
 export type Rank = 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond' | 'Master' | 'Grand Master';
 
+export type League = 'Bronze Bench' | 'Silver Squad' | 'Gold Guild' | 'Platinum Pantheon' | 'Diamond Dynasty' | 'Grandmaster Gallery';
+
 export interface UserProfile {
   id: string; // Internal UUID
-  friendCode: string; // Public 6-digit ID
   name: string;
   coins: number; // In-game currency
   gems: number; // Premium currency
@@ -12,17 +13,27 @@ export interface UserProfile {
   stars: number; // 0-4 stars within a tier
   level: number; // Calculated from EXP
   rank: Rank;
+  league: League;
   tier: number; // Tiers within a Rank (e.g., Gold I, Gold II)
+  brainPower: number; // 0-100
+  titles: string[];
   matchesPlayed: number;
   matchesWon: number;
   language: 'en' | 'hi' | 'bn';
   inventory: string[]; // IDs of owned ShopItems
-  chests: UserChest[];
   friends: string[]; // Array of friendCodes
   selectedAvatar: string; // ID of a ShopItem
   selectedBorder: string; // ID of a ShopItem
-  bronzeChestPenaltyMatches: number; // The "Bronze Curse" counter
+  selectedEmoji: string; // ID of a ShopItem
+  selectedTaunt: string; // ID of a ShopItem
+  selectedChat: string; // ID of a ShopItem
   seenQuestionIds: string[];
+  lastFreeRewardTime?: number;
+  lastLuckyQuestionTime?: number;
+  dailyArenaCompleted?: boolean;
+  dailyNugget?: { fact: string; date: string };
+  dailyStreak: number;
+  lastLoginDate: number; // Timestamp
 }
 
 // Game Modes and Logic
@@ -50,22 +61,19 @@ export interface Arena {
   difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
 }
 
-// Economy and Rewards
-
-export type ChestTier = 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
-
-export interface UserChest {
-  id: string;
-  tier: ChestTier;
-  status: 'LOCKED' | 'UNLOCKING' | 'READY';
-  unlockTimeRemaining: number; // in seconds
-  obtainedAt: number; // Timestamp
-}
-
 // Shop and Customization
 
 export type Rarity = 'Common' | 'Rare' | 'Epic' | 'Legendary';
-export type ItemType = 'Avatar' | 'Border';
+export type ItemType = 'Avatar' | 'Border' | 'Taunt' | 'Emoji' | 'Chat';
+
+export interface DailyChallenge {
+  id: string;
+  title: string;
+  description: string;
+  target: number;
+  progress: number;
+  reward: number;
+}
 
 export interface ShopItem {
   id: string;
@@ -73,6 +81,7 @@ export interface ShopItem {
   type: ItemType;
   rarity: Rarity;
   cost: number;
+  currency?: 'coins' | 'gems'; // default to coins
   assetName: string; // e.g., 'avatar_cyber_brain', 'border_neon_fire'
 }
 
@@ -84,14 +93,50 @@ export type ScreenState =
   | 'SOLO_LOBBY'
   | 'PVP_LOBBY' // World Tour city selection
   | 'TEAM_LOBBY'
+  | 'DAILY_ARENA_LOBBY'
+  | 'SENSORY_LOBBY'
+  | 'TEAM_FORMATION'
+  | 'TEAM_VS'
   | 'PASS_N_PLAY_LOBBY'
   | 'GAME_SOLO_CLIMB'
   | 'GAME_PVP_DUEL'
   | 'GAME_TEAM_BATTLE'
   | 'GAME_PASS_N_PLAY'
+  | 'GAME_DAILY_ARENA'
+  | 'GAME_SENSORY'
   | 'GAME_RESULT'
   | 'SHOP'
   | 'PROFILE'
   | 'LEADERBOARD'
-  | 'SETTINGS';
+  | 'SETTINGS'
+  | 'REWARDS'
+  | 'GAME_DETECTIVE';
+
+// Detective Mode (Brain Out style)
+
+export interface DetectiveObject {
+  id: string;
+  src: string;
+  initialPosition: { x: number; y: number }; // Percentage-based position
+  size: { width: number; height: number }; // Percentage-based size
+  isDraggable: boolean;
+  isInteractable?: boolean; // For taps
+  initialRotation?: number;
+  initialOpacity?: number;
+  zIndex?: number;
+}
+
+export type SolutionCondition =
+  | { type: 'position'; objectId: string; targetArea: { x: number; y: number; width: number; height: number } }
+  | { type: 'tap'; objectId: string; requiredTaps?: number }
+  | { type: 'drag-on-top'; draggedId: string; targetId: string };
+
+export interface DetectiveLevel {
+  id: number;
+  title: string;
+  backgroundImage?: string;
+  objects: DetectiveObject[];
+  solution: SolutionCondition[];
+  solutionText: string; // Hint for the player
+}
 

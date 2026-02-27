@@ -1,5 +1,5 @@
 {
   "name": "Brain Arena",
   "description": "An ultimate trivia game with multiple game modes, a ranking system, and a premium shop for avatars and borders.",
-  "requestFramePermissions": []
+  "requestFramePermissions": ["microphone"]
 }
