@@ -99,7 +99,7 @@ const TeamBattleGame: React.FC<{
       soundManager.playSfx('correct');
       setPlayerTeamScore(prev => {
         const newScore = prev + 10;
-        if (newScore >= 100) {
+        if (newScore >= 1000) { // Increased for 'Infinite' feel
           setGameOver(true);
           awardRewards(true);
         }
@@ -110,7 +110,7 @@ const TeamBattleGame: React.FC<{
       if (Math.random() < 0.75) {
         setOpponentTeamScore(prev => {
           const newScore = prev + 10;
-          if (newScore >= 100) {
+          if (newScore >= 1000) { // Increased for 'Infinite' feel
             setGameOver(true);
             awardRewards(false);
           }
@@ -127,7 +127,7 @@ const TeamBattleGame: React.FC<{
       if (Math.random() < 0.75) {
         setOpponentTeamScore(prev => {
           const newScore = prev + 10;
-          if (newScore >= 100) {
+          if (newScore >= 1000) { // Increased for 'Infinite' feel
             setGameOver(true);
             awardRewards(false);
           }

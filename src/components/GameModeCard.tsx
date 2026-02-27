@@ -18,7 +18,7 @@ const GameModeCard: React.FC<{ title: string, subtitle: string, icon: React.Reac
     whileTap={!disabled ? { scale: 0.98 } : {}}
     onClick={onClick}
     disabled={disabled}
-    className={`w-full h-24 rounded-[2rem] glass-panel p-0.5 shadow-2xl relative group overflow-hidden transition-all ${!disabled ? 'hover:neon-glow-blue cursor-pointer' : 'opacity-50 grayscale cursor-not-allowed'}`}
+    className={`w-full h-24 rounded-[2rem] glass-panel p-0.5 shadow-2xl relative group overflow-hidden transition-all gpu ${!disabled ? 'hover:neon-glow-blue cursor-pointer' : 'opacity-50 grayscale cursor-not-allowed'}`}
   >
     <div className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-20 group-hover:opacity-30 transition-opacity`} />
     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>

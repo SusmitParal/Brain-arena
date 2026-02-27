@@ -120,7 +120,7 @@ const Home: React.FC<{ user: UserProfile; onNavigate: (screen: ScreenState) => v
                 }
               }}
               disabled={!canClaimFreeReward}
-              className="relative glass-panel rounded-2xl p-4 flex-1 flex flex-col items-center justify-center font-bold overflow-hidden disabled:opacity-40 disabled:cursor-not-allowed group transition-all hover:neon-glow-blue"
+              className="relative glass-panel rounded-2xl p-4 flex-1 flex flex-col items-center justify-center font-bold overflow-hidden disabled:opacity-40 disabled:cursor-not-allowed group transition-all hover:neon-glow-blue gpu"
             >
               <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <Gift size={32} className="mb-2 text-blue-400" />
@@ -141,7 +141,7 @@ const Home: React.FC<{ user: UserProfile; onNavigate: (screen: ScreenState) => v
                 }
               }}
               disabled={!canPlayLuckyQuestion}
-              className="relative glass-panel rounded-2xl p-4 flex-1 flex flex-col items-center justify-center font-bold overflow-hidden disabled:opacity-40 disabled:cursor-not-allowed group transition-all hover:neon-glow-purple"
+              className="relative glass-panel rounded-2xl p-4 flex-1 flex flex-col items-center justify-center font-bold overflow-hidden disabled:opacity-40 disabled:cursor-not-allowed group transition-all hover:neon-glow-purple gpu"
             >
               <div className="absolute inset-0 bg-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <HelpCircle size={32} className="mb-2 text-purple-400" />
@@ -203,7 +203,7 @@ const Home: React.FC<{ user: UserProfile; onNavigate: (screen: ScreenState) => v
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             className="relative"
           >
-            <h1 className="text-7xl font-black italic tracking-tighter leading-none font-display text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 relative">
+            <h1 className="text-7xl font-black italic tracking-tighter leading-none font-display text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 relative gpu">
               <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-500 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">BRAIN</span>
               <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-b from-blue-400 to-blue-600 drop-shadow-[0_0_20px_rgba(59,130,246,0.5)]">ARENA</span>

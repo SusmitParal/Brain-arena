@@ -222,7 +222,7 @@ const SensoryGame: React.FC<SensoryGameProps> = ({ user, onComplete, onExit }) =
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="text-center max-w-md w-full"
+          className="text-center max-w-md w-full gpu"
         >
           <Activity size={80} className="text-emerald-400 mx-auto mb-6 drop-shadow-[0_0_30px_rgba(52,211,153,0.6)]" />
           <h1 className="text-5xl font-black italic tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-b from-emerald-300 to-emerald-600 mb-2 font-display">Sequence Complete</h1>
@@ -291,7 +291,7 @@ const SensoryGame: React.FC<SensoryGameProps> = ({ user, onComplete, onExit }) =
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="mb-8 text-center"
+                className="mb-8 text-center gpu"
                 >
                 <span className="inline-block bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full mb-4 border border-emerald-500/20">
                     {currentQuestion.type === 'audio' ? 'Audio-Morph' : 'Thermal Map'}
@@ -305,11 +305,11 @@ const SensoryGame: React.FC<SensoryGameProps> = ({ user, onComplete, onExit }) =
                 )}
 
                 {currentQuestion.type === 'image' && currentQuestion.mediaBase64 && (
-                    <div className="bg-white/5 border border-white/10 rounded-3xl p-4 mb-6 flex flex-col items-center justify-center overflow-hidden">
+                    <div className="bg-white/5 border border-white/10 rounded-3xl p-4 mb-6 flex flex-col items-center justify-center overflow-hidden gpu">
                         <img 
                             src={`data:image/jpeg;base64,${currentQuestion.mediaBase64}`} 
                             alt="Thermal Map"
-                            className="w-full max-w-sm rounded-2xl"
+                            className="w-full max-w-sm rounded-2xl gpu"
                             style={{
                                 filter: `hue-rotate(${timeLeft * 20}deg) saturate(${1 + timeLeft/3}) blur(${timeLeft/3}px) contrast(${1 + timeLeft/10})`,
                                 transition: 'filter 1s linear'

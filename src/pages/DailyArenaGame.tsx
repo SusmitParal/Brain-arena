@@ -127,7 +127,7 @@ const DailyArenaGame: React.FC<DailyArenaGameProps> = ({ user, onComplete, onExi
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="text-center max-w-md w-full"
+          className="text-center max-w-md w-full gpu"
         >
           <Crown size={80} className="text-amber-400 mx-auto mb-6 drop-shadow-[0_0_30px_rgba(251,191,36,0.6)]" />
           <h1 className="text-5xl font-black italic tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-b from-amber-300 to-amber-600 mb-2 font-display">Arena Closed</h1>
@@ -180,13 +180,13 @@ const DailyArenaGame: React.FC<DailyArenaGameProps> = ({ user, onComplete, onExi
       </div>
 
       {/* Question */}
-      <div className="flex-grow flex flex-col justify-center max-w-2xl mx-auto w-full relative z-10">
+      <div className="flex-grow flex flex-col justify-center max-w-2xl mx-auto w-full relative z-10 gpu">
         <motion.div
           key={currentQuestion.id}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="mb-8 text-center"
+          className="mb-8 text-center gpu"
         >
           <span className="inline-block bg-amber-500/10 text-amber-400 text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full mb-4 border border-amber-500/20">
             {currentQuestion.topic}

@@ -1,20 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Check, X } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Check, X, Loader2 } from 'lucide-react';
 import { soundManager } from '../utils/audio';
-import questions from '../data/pass-n-play-questions.json';
+import { GoogleGenAI, Type } from '@google/genai';
+import { Question } from '../types';
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
 
 const PassNPlayGame: React.FC<{ playerNames: string[]; onExit: () => void; }> = ({ playerNames, onExit }) => {
   const [scores, setScores] = useState(playerNames.map(() => 0));
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchQuestions = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const result = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: 'Generate 10 fun, diverse trivia questions for a group of friends. Topics: Pop Culture, Movies, Music, General Knowledge. Format: JSON array of objects with id, question, options (4), answer, topic.',
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                id: { type: Type.STRING },
+                question: { type: Type.STRING },
+                options: { type: Type.ARRAY, items: { type: Type.STRING } },
+                answer: { type: Type.STRING },
+                topic: { type: Type.STRING },
+              },
+            },
+          },
+        },
+      });
+      const responseText = result.text;
+      const parsedQuestions = JSON.parse(responseText);
+      setQuestions(prev => [...prev, ...parsedQuestions]);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchQuestions();
+  }, [fetchQuestions]);
 
   const currentQuestion = questions[currentQuestionIndex];
 
   const handleAnswer = (option: string) => {
-    if (isAnswered) return;
+    if (isAnswered || !currentQuestion) return;
 
     setSelectedOption(option);
     setIsAnswered(true);
@@ -31,16 +73,25 @@ const PassNPlayGame: React.FC<{ playerNames: string[]; onExit: () => void; }> = 
     setTimeout(() => {
       setIsAnswered(false);
       setSelectedOption(null);
-      if (currentQuestionIndex === questions.length - 1) {
-        // Game over
-        alert(`Game Over!\n\nScores:\n${playerNames.map((name, i) => `${name}: ${scores[i]}`).join('\n')}`);
-        onExit();
-      } else {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setCurrentPlayerIndex((currentPlayerIndex + 1) % playerNames.length);
+      
+      const nextIndex = currentQuestionIndex + 1;
+      if (nextIndex >= questions.length - 2) {
+        fetchQuestions(); // Pre-fetch more
       }
+      
+      setCurrentQuestionIndex(nextIndex);
+      setCurrentPlayerIndex((currentPlayerIndex + 1) % playerNames.length);
     }, 2000);
   };
+
+  if (isLoading && questions.length === 0) {
+    return (
+      <div className="fixed inset-0 bg-home text-white flex flex-col items-center justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-400 mb-4" />
+        <p className="font-black uppercase tracking-widest italic text-gray-400">Generating Unlimited Questions...</p>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -70,49 +121,44 @@ const PassNPlayGame: React.FC<{ playerNames: string[]; onExit: () => void; }> = 
       </div>
 
       <div className="flex-grow flex flex-col items-center justify-center p-4 space-y-6">
-        <motion.h2
-          key={currentQuestionIndex}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-2xl font-bold text-center"
-        >
-          {currentQuestion.question}
-        </motion.h2>
-        <motion.div
-          className="grid grid-cols-2 gap-4 w-full max-w-md"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ staggerChildren: 0.1 }}
-        >
-          {currentQuestion.options.map((option, i) => (
+        <AnimatePresence mode="wait">
+          {currentQuestion && (
             <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0 },
-              }}
+              key={currentQuestionIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="w-full max-w-2xl flex flex-col items-center space-y-8"
             >
-              <motion.button
-                key={i}
-                onClick={() => handleAnswer(option)}
-                disabled={isAnswered}
-                className={`w-full p-4 rounded-lg text-lg font-bold transition-all duration-300 ${
-                  isAnswered
-                    ? option === currentQuestion.answer
-                      ? 'bg-green-500'
-                      : option === selectedOption
-                      ? 'bg-red-500'
-                      : 'bg-gray-700'
-                    : 'bg-blue-600 hover:bg-blue-500'
-                }`}
-                whileHover={{ scale: isAnswered ? 1 : 1.05 }}
-                whileTap={{ scale: isAnswered ? 1 : 0.95 }}
-              >
-                {option}
-              </motion.button>
+              <h2 className="text-3xl font-black text-center leading-tight tracking-tighter font-display">
+                {currentQuestion.question}
+              </h2>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                {currentQuestion.options.map((option, i) => (
+                  <motion.button
+                    key={i}
+                    onClick={() => handleAnswer(option)}
+                    disabled={isAnswered}
+                    className={`w-full p-6 rounded-2xl text-lg font-black transition-all border-2 uppercase italic tracking-wider font-display ${
+                      isAnswered
+                        ? option === currentQuestion.answer
+                          ? 'bg-emerald-600 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+                          : option === selectedOption
+                          ? 'bg-rose-600 border-rose-400'
+                          : 'bg-white/5 border-white/10 opacity-30'
+                        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:neon-glow-blue'
+                    }`}
+                    whileHover={!isAnswered ? { scale: 1.02, y: -2 } : {}}
+                    whileTap={!isAnswered ? { scale: 0.98 } : {}}
+                  >
+                    {option}
+                  </motion.button>
+                ))}
+              </div>
             </motion.div>
-          ))}
-        </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );

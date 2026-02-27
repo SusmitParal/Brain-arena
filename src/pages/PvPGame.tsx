@@ -133,22 +133,18 @@ const PvPGame: React.FC<{ arena: Arena; onExit: () => void; user: UserProfile; s
   const fetchQuestions = useCallback(async () => {
     setIsLoading(true);
     
-    // Use easy kids questions for the first 4 arenas
-    if (arenaIndex >= 0 && arenaIndex < 4) {
-      const kidsQuestions = getRandomKidsQuestions(10);
-      setQuestions(kidsQuestions);
-      setIsLoading(false);
-      return;
-    }
+    const isEasyArena = arenaIndex >= 0 && arenaIndex < 4;
+    const promptDifficulty = isEasyArena ? 'extremely easy, kid-friendly' : arena.difficulty;
 
     try {
       const result = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `Generate 10 unique trivia questions. Topics must be extremely diverse, drawn from millions of possibilities (e.g., quantum physics, 18th-century literature, obscure sports, pop culture, biology, astronomy, international relations, trains, ships, entertainment, famous personalities, science, technology, art, geography, and highly specific obscure facts). Do not stick to just history or geography.
+        ${isEasyArena ? 'Questions should be suitable for children aged 5-10.' : ''}
         IMPORTANT: Do not include images. The questions should be text-only.
         NO REPETITION. Ensure the questions are fresh and not commonly known.
         DO NOT repeat any of these question IDs: ${user.seenQuestionIds.join(', ')}.
-        Difficulty: ${arena.difficulty}.`,
+        Difficulty: ${promptDifficulty}.`,
         config: {
           responseMimeType: 'application/json',
           responseSchema: {
@@ -360,7 +356,7 @@ const PvPGame: React.FC<{ arena: Arena; onExit: () => void; user: UserProfile; s
 
   if (isSearching || isBetting || (isLoading && questions.length === 0)) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-pvp-game text-white overflow-hidden relative">
+      <div className="flex flex-col items-center justify-center h-screen bg-pvp-game text-white overflow-hidden relative gpu">
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-30">
           <motion.div 
             animate={{ 
@@ -499,7 +495,7 @@ const PvPGame: React.FC<{ arena: Arena; onExit: () => void; user: UserProfile; s
   return (
     <motion.div 
       animate={{ x: shake ? [-10, 10, -10, 10, 0] : 0 }}
-      className="min-h-screen bg-pvp-game text-white flex flex-col items-center p-2 relative overflow-hidden"
+      className="min-h-screen bg-pvp-game text-white flex flex-col items-center p-2 relative overflow-hidden gpu"
     >
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-20">
@@ -585,7 +581,7 @@ const PvPGame: React.FC<{ arena: Arena; onExit: () => void; user: UserProfile; s
           {currentQuestion && (
             <motion.div 
               key={currentQuestion.id}
-              className="w-full glass-panel rounded-[2.5rem] shadow-2xl p-6 border border-white/10 flex flex-col max-h-full overflow-y-auto no-scrollbar relative z-10"
+              className="w-full glass-panel rounded-[2.5rem] shadow-2xl p-6 border border-white/10 flex flex-col max-h-full overflow-y-auto no-scrollbar relative z-10 gpu"
               initial={{ opacity: 0, scale: 0.95, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 1.05, y: -30 }}

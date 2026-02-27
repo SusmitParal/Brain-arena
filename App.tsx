@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Home from './src/pages/Home';
 import SoloClimbLobby from './src/pages/SoloClimbLobby';
 import SoloClimbGame from './src/pages/SoloClimbGame';
@@ -236,7 +237,24 @@ const App: React.FC = () => {
     }
   };
 
-  return <ErrorBoundary><div className="App min-h-screen bg-[#0A0A0A]">{renderScreen()}</div></ErrorBoundary>;
+  return (
+    <ErrorBoundary>
+      <div className="App min-h-screen bg-[#0A0A0A] gpu overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={isNewUser ? 'welcome' : screen}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="w-full h-full"
+          >
+            {renderScreen()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </ErrorBoundary>
+  );
 };
 
 // A temporary component for screens that are not yet built

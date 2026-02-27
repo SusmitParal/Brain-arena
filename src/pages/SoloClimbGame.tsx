@@ -47,22 +47,14 @@ const SoloClimbGame: React.FC<{ difficulty: Difficulty; onExit: () => void; user
   const fetchQuestions = useCallback(async () => {
     setIsLoading(true);
     
-    if (difficulty === 'Beginner') {
-      // Use predefined kids questions for Beginner mode
-      const kidsQuestions = getRandomKidsQuestions(5).map(kq => ({
-        ...kq,
-        imageUrl: `https://picsum.photos/seed/${kq.id}/800/450?blur=1`
-      }));
-      setQuestions(prev => [...prev, ...kidsQuestions]);
-      setIsLoading(false);
-      return;
-    }
-
+    const promptDifficulty = difficulty === 'Beginner' ? 'extremely easy, kid-friendly' : difficulty;
+    
     try {
       const result = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Generate 5 unique trivia questions of ${difficulty} difficulty. 
+        contents: `Generate 5 unique trivia questions of ${promptDifficulty} difficulty. 
         Topics must be extremely diverse, drawn from millions of possibilities (e.g., quantum physics, 18th-century literature, obscure sports, pop culture, biology, astronomy, international relations, trains, ships, entertainment, famous personalities, science, technology, art, geography, and highly specific obscure facts). Do not stick to just history or geography.
+        ${difficulty === 'Beginner' ? 'Questions should be suitable for children aged 5-10.' : ''}
         IMPORTANT: At least 2 questions MUST be "image-based". For these, provide a descriptive "imageUrl" using a placeholder like 'https://picsum.photos/seed/[unique_seed]/800/450' and ensure the question refers to visual details.
         DO NOT repeat any of these question IDs: ${user.seenQuestionIds.join(', ')}.
         For each question, provide a unique "id" (string), "question", 4 multiple-choice "options", "answer", and "topic". 
